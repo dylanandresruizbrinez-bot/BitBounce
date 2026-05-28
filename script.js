@@ -3,6 +3,7 @@ const board = document.querySelector(".game-board");
 
 let selectedCard = null;
 let projectiles = [];
+let particles = [];
 let troops = [];
 
 /* =========================================
@@ -234,6 +235,7 @@ function gameLoop(){
 
     });
       updateProjectiles();
+   updateParticles();
    
     requestAnimationFrame(gameLoop);
 
@@ -460,7 +462,9 @@ function spawnProjectile(attacker, victim){
 
     projectile.classList.add("projectile");
 
-    /* TYPES */
+    /* =========================
+       TYPES
+    ========================= */
 
     if(attacker.name === "Arquero"){
 
@@ -502,7 +506,9 @@ function spawnProjectile(attacker, victim){
 
         y: attacker.y + 25,
 
-        speed: 4
+        speed: 5,
+
+        trailTimer: 0
 
     };
 
@@ -517,9 +523,17 @@ function updateProjectiles(){
 
     projectiles.forEach(projectile => {
 
-        if(!projectile.victim){
+        if(
+            !projectile.victim ||
+            !troops.includes(projectile.victim)
+        ){
 
             projectile.element.remove();
+
+            projectiles =
+            projectiles.filter(
+                p => p !== projectile
+            );
 
             return;
 
@@ -534,7 +548,27 @@ function updateProjectiles(){
         const distance =
         Math.sqrt(dx * dx + dy * dy);
 
-        /* HIT */
+        /* =========================
+           TRAIL EFFECT
+        ========================= */
+
+        projectile.trailTimer++;
+
+        if(projectile.trailTimer > 2){
+
+            spawnTrailParticle(
+                projectile.x,
+                projectile.y,
+                projectile.attacker.name
+            );
+
+            projectile.trailTimer = 0;
+
+        }
+
+        /* =========================
+           HIT
+        ========================= */
 
         if(distance < 25){
 
@@ -542,6 +576,12 @@ function updateProjectiles(){
             projectile.damage;
 
             hitEffect(projectile.victim);
+
+            spawnImpactParticles(
+                projectile.x,
+                projectile.y,
+                projectile.attacker.name
+            );
 
             addLog(
                 `${projectile.attacker.name} impactó ${projectile.victim.name}`
@@ -566,7 +606,9 @@ function updateProjectiles(){
 
         }
 
-        /* MOVE */
+        /* =========================
+           MOVE
+        ========================= */
 
         const angle =
         Math.atan2(dy, dx);
@@ -584,6 +626,272 @@ function updateProjectiles(){
 
         projectile.element.style.top =
         `${projectile.y}px`;
+
+    });
+
+}
+/* =========================================
+   PARTICLES
+========================================= */
+
+function spawnImpactParticles(x, y, type){
+
+    for(let i = 0; i < 10; i++){
+
+        createParticle(
+            x,
+            y,
+            type,
+            true
+        );
+
+    }
+
+}
+
+function spawnTrailParticle(x, y, type){
+
+    createParticle(
+        x,
+        y,
+        type,
+        false
+    );
+
+}
+
+function createParticle(x, y, type, explosive){
+
+    const particle =
+    document.createElement("div");
+
+    particle.classList.add("particle");
+
+    /* COLORS */
+
+    if(type === "Arquero"){
+
+        particle.style.background =
+        "#ffe082";
+
+    }
+
+    if(type === "Mago"){
+
+        particle.style.background =
+        "#b388ff";
+
+    }
+
+    if(type === "Dragón"){
+
+        particle.style.background =
+        "#ff5722";
+
+    }
+
+    const size =
+    explosive
+    ?
+    Math.random() * 12 + 6
+    :
+    Math.random() * 6 + 3;
+
+    particle.style.width =
+    `${size}px`;
+
+    particle.style.height =
+    `${size}px`;
+
+    particle.style.left =
+    `${x}px`;
+
+    particle.style.top =
+    `${y}px`;
+
+    board.appendChild(particle);
+
+    const angle =
+    Math.random() * Math.PI * 2;
+
+    const speed =
+    explosive
+    ?
+    Math.random() * 4 + 1
+    :
+    Math.random() * 2;
+
+    const particleObj = {
+
+        element: particle,
+
+        x,
+
+        y,
+
+        vx:
+        Math.cos(angle) * speed,
+
+        vy:
+        Math.sin(angle) * speed,
+
+        life:
+        explosive ? 40 : 20
+
+    };
+
+    particles.push(particleObj);
+
+}
+/* =========================================
+   PARTICLES
+========================================= */
+
+function spawnImpactParticles(x, y, type){
+
+    for(let i = 0; i < 10; i++){
+
+        createParticle(
+            x,
+            y,
+            type,
+            true
+        );
+
+    }
+
+}
+
+function spawnTrailParticle(x, y, type){
+
+    createParticle(
+        x,
+        y,
+        type,
+        false
+    );
+
+}
+
+function createParticle(x, y, type, explosive){
+
+    const particle =
+    document.createElement("div");
+
+    particle.classList.add("particle");
+
+    /* COLORS */
+
+    if(type === "Arquero"){
+
+        particle.style.background =
+        "#ffe082";
+
+    }
+
+    if(type === "Mago"){
+
+        particle.style.background =
+        "#b388ff";
+
+    }
+
+    if(type === "Dragón"){
+
+        particle.style.background =
+        "#ff5722";
+
+    }
+
+    const size =
+    explosive
+    ?
+    Math.random() * 12 + 6
+    :
+    Math.random() * 6 + 3;
+
+    particle.style.width =
+    `${size}px`;
+
+    particle.style.height =
+    `${size}px`;
+
+    particle.style.left =
+    `${x}px`;
+
+    particle.style.top =
+    `${y}px`;
+
+    board.appendChild(particle);
+
+    const angle =
+    Math.random() * Math.PI * 2;
+
+    const speed =
+    explosive
+    ?
+    Math.random() * 4 + 1
+    :
+    Math.random() * 2;
+
+    const particleObj = {
+
+        element: particle,
+
+        x,
+
+        y,
+
+        vx:
+        Math.cos(angle) * speed,
+
+        vy:
+        Math.sin(angle) * speed,
+
+        life:
+        explosive ? 40 : 20
+
+    };
+
+    particles.push(particleObj);
+
+}
+/* =========================================
+   UPDATE PARTICLES
+========================================= */
+
+function updateParticles(){
+
+    particles.forEach(particle => {
+
+        particle.x += particle.vx;
+
+        particle.y += particle.vy;
+
+        particle.life--;
+
+        particle.element.style.left =
+        `${particle.x}px`;
+
+        particle.element.style.top =
+        `${particle.y}px`;
+
+        particle.element.style.opacity =
+        particle.life / 40;
+
+        particle.element.style.transform =
+        `scale(${particle.life / 20})`;
+
+        if(particle.life <= 0){
+
+            particle.element.remove();
+
+            particles =
+            particles.filter(
+                p => p !== particle
+            );
+
+        }
 
     });
 
