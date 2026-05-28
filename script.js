@@ -2,7 +2,7 @@ const cards = document.querySelectorAll(".card");
 const board = document.querySelector(".game-board");
 
 let selectedCard = null;
-
+let projectiles = [];
 let troops = [];
 
 /* =========================================
@@ -230,9 +230,11 @@ function gameLoop(){
         moveTroop(troop);
 
         updateTroop(troop);
+       
 
     });
-
+      updateProjectiles();
+   
     requestAnimationFrame(gameLoop);
 
 }
@@ -410,9 +412,187 @@ function attackTroop(attacker, victim){
 
     attacker.lastAttack = now;
 
-    victim.hp -= attacker.damage;
+    /* =========================
+       RANGED ATTACKS
+    ========================= */
 
-    /* HIT EFFECT */
+    if(
+        attacker.name === "Arquero" ||
+        attacker.name === "Mago" ||
+        attacker.name === "Dragón"
+    ){
+
+        spawnProjectile(
+            attacker,
+            victim
+        );
+
+    }
+    else{
+
+        /* MELEE */
+
+        victim.hp -= attacker.damage;
+
+        hitEffect(victim);
+
+        addLog(
+            `${attacker.name} golpeó ${victim.name}`
+        );
+
+        if(victim.hp <= 0){
+
+            destroyTroop(victim);
+
+        }
+
+    }
+
+}
+/* =========================================
+   PROJECTILES
+========================================= */
+
+function spawnProjectile(attacker, victim){
+
+    const projectile =
+    document.createElement("div");
+
+    projectile.classList.add("projectile");
+
+    /* TYPES */
+
+    if(attacker.name === "Arquero"){
+
+        projectile.classList.add("arrow");
+
+    }
+
+    if(attacker.name === "Mago"){
+
+        projectile.classList.add("magic");
+
+    }
+
+    if(attacker.name === "Dragón"){
+
+        projectile.classList.add("fire");
+
+    }
+
+    projectile.style.left =
+    `${attacker.x + 25}px`;
+
+    projectile.style.top =
+    `${attacker.y + 25}px`;
+
+    board.appendChild(projectile);
+
+    const projectileObj = {
+
+        element: projectile,
+
+        attacker,
+
+        victim,
+
+        damage: attacker.damage,
+
+        x: attacker.x + 25,
+
+        y: attacker.y + 25,
+
+        speed: 4
+
+    };
+
+    projectiles.push(projectileObj);
+
+}
+/* =========================================
+   UPDATE PROJECTILES
+========================================= */
+
+function updateProjectiles(){
+
+    projectiles.forEach(projectile => {
+
+        if(!projectile.victim){
+
+            projectile.element.remove();
+
+            return;
+
+        }
+
+        const dx =
+        projectile.victim.x - projectile.x;
+
+        const dy =
+        projectile.victim.y - projectile.y;
+
+        const distance =
+        Math.sqrt(dx * dx + dy * dy);
+
+        /* HIT */
+
+        if(distance < 25){
+
+            projectile.victim.hp -=
+            projectile.damage;
+
+            hitEffect(projectile.victim);
+
+            addLog(
+                `${projectile.attacker.name} impactó ${projectile.victim.name}`
+            );
+
+            if(projectile.victim.hp <= 0){
+
+                destroyTroop(
+                    projectile.victim
+                );
+
+            }
+
+            projectile.element.remove();
+
+            projectiles =
+            projectiles.filter(
+                p => p !== projectile
+            );
+
+            return;
+
+        }
+
+        /* MOVE */
+
+        const angle =
+        Math.atan2(dy, dx);
+
+        projectile.x +=
+        Math.cos(angle) *
+        projectile.speed;
+
+        projectile.y +=
+        Math.sin(angle) *
+        projectile.speed;
+
+        projectile.element.style.left =
+        `${projectile.x}px`;
+
+        projectile.element.style.top =
+        `${projectile.y}px`;
+
+    });
+
+}
+/* =========================================
+   HIT EFFECT
+========================================= */
+
+function hitEffect(victim){
 
     victim.element.classList.add("hit");
 
@@ -421,18 +601,6 @@ function attackTroop(attacker, victim){
         victim.element.classList.remove("hit");
 
     }, 120);
-
-    addLog(
-        `${attacker.name} atacó ${victim.name}`
-    );
-
-    /* DEATH */
-
-    if(victim.hp <= 0){
-
-        destroyTroop(victim);
-
-    }
 
 }
 /* =========================================
