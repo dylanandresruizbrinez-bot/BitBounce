@@ -40,7 +40,18 @@ const cardsData = {
     }
 
 };
+/* =========================================
+   ENEMY AI
+========================================= */
 
+const enemyDeck = [
+
+    "Guerrero",
+    "Arquero",
+    "Mago",
+    "Dragón"
+
+];
 /* =========================================
    ENABLE DRAG
 ========================================= */
@@ -141,7 +152,26 @@ function spawnTroop(name, x, y, team){
     troop.style.left = `${x - 35}px`;
     troop.style.top = `${y - 35}px`;
 
-    troop.style.background = stats.color;
+    if(team === "player"){
+
+    troop.style.background =
+    `linear-gradient(
+        135deg,
+        ${stats.color},
+        #ffffff
+    )`;
+
+}
+else{
+
+    troop.style.background =
+    `linear-gradient(
+        135deg,
+        #ff0033,
+        ${stats.color}
+    )`;
+
+}
 
     board.appendChild(troop);
 
@@ -190,7 +220,49 @@ function gameLoop(){
     requestAnimationFrame(gameLoop);
 
 }
+/* =========================================
+   ENEMY SPAWN AI
+========================================= */
 
+function enemyAI(){
+
+    const randomCard =
+
+    enemyDeck[
+        Math.floor(
+            Math.random() * enemyDeck.length
+        )
+    ];
+
+    const randomX =
+
+    Math.random() *
+    (board.offsetWidth - 100) + 50;
+
+    const randomY =
+
+    Math.random() * 120 + 50;
+
+    spawnTroop(
+        randomCard,
+        randomX,
+        randomY,
+        "enemy"
+    );
+
+    addLog(
+        `Enemigo invocó ${randomCard}`
+    );
+
+}
+
+/* SPAWN LOOP */
+
+setInterval(() => {
+
+    enemyAI();
+
+}, 4000);
 gameLoop();
 
 /* =========================================
@@ -205,11 +277,16 @@ function moveTroop(troop){
 
     }
 
+    if(troop.team === "enemy"){
+
+        troop.y += troop.speed;
+
+    }
+
     troop.element.style.top =
     `${troop.y}px`;
 
 }
-
 /* =========================================
    UPDATE TROOP UI
 ========================================= */
