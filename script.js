@@ -3,13 +3,53 @@ const board = document.querySelector(".game-board");
 
 let selectedCard = null;
 
-/* =========================
-   DRAG START
-========================= */
+let troops = [];
+
+/* =========================================
+   CARDS DATA
+========================================= */
+
+const cardsData = {
+
+    "Guerrero": {
+        hp: 150,
+        damage: 20,
+        speed: 1.2,
+        color: "#ff8800"
+    },
+
+    "Arquero": {
+        hp: 90,
+        damage: 15,
+        speed: 1.5,
+        color: "#00ffaa"
+    },
+
+    "Mago": {
+        hp: 80,
+        damage: 30,
+        speed: 1,
+        color: "#8b5cf6"
+    },
+
+    "Dragón": {
+        hp: 300,
+        damage: 45,
+        speed: 0.8,
+        color: "#ff004c"
+    }
+
+};
+
+/* =========================================
+   ENABLE DRAG
+========================================= */
 
 cards.forEach(card => {
 
-    card.addEventListener("dragstart", (e) => {
+    card.setAttribute("draggable", true);
+
+    card.addEventListener("dragstart", () => {
 
         selectedCard = card;
 
@@ -19,17 +59,9 @@ cards.forEach(card => {
 
 });
 
-/* =========================
-   ENABLE DRAG
-========================= */
-
-cards.forEach(card => {
-    card.setAttribute("draggable", true);
-});
-
-/* =========================
-   DRAG OVER BOARD
-========================= */
+/* =========================================
+   DRAG OVER
+========================================= */
 
 board.addEventListener("dragover", (e) => {
 
@@ -37,9 +69,9 @@ board.addEventListener("dragover", (e) => {
 
 });
 
-/* =========================
-   DROP CARD
-========================= */
+/* =========================================
+   DROP SYSTEM
+========================================= */
 
 board.addEventListener("drop", (e) => {
 
@@ -47,34 +79,36 @@ board.addEventListener("drop", (e) => {
 
     if(!selectedCard) return;
 
-    /* POSITION */
+    const boardRect =
+    board.getBoundingClientRect();
 
-    const boardRect = board.getBoundingClientRect();
+    const x =
+    e.clientX - boardRect.left;
 
-    const x = e.clientX - boardRect.left;
-    const y = e.clientY - boardRect.top;
+    const y =
+    e.clientY - boardRect.top;
 
-    /* CREATE TROOP */
+    /* ONLY PLAYER SIDE */
 
-    const troop = document.createElement("div");
+    if(y < board.offsetHeight / 2){
 
-    troop.classList.add("troop");
+        addLog(
+            "No puedes invocar en territorio enemigo"
+        );
 
-    troop.innerText =
+        return;
+
+    }
+
+    const troopName =
     selectedCard.querySelector("h3").innerText;
 
-    troop.style.left = `${x - 35}px`;
-    troop.style.top = `${y - 35}px`;
-
-    board.appendChild(troop);
-
-    /* BATTLE LOG */
-
-    addLog(
-        `${troop.innerText} invocado`
+    spawnTroop(
+        troopName,
+        x,
+        y,
+        "player"
     );
-
-    /* REMOVE DRAG STATE */
 
     selectedCard.classList.remove("dragging");
 
@@ -82,19 +116,128 @@ board.addEventListener("drop", (e) => {
 
 });
 
-/* =========================
-   LOG SYSTEM
-========================= */
+/* =========================================
+   SPAWN TROOP
+========================================= */
+
+function spawnTroop(name, x, y, team){
+
+    const stats = cardsData[name];
+
+    if(!stats) return;
+
+    const troop = document.createElement("div");
+
+    troop.classList.add("troop");
+
+    troop.innerHTML = `
+        <div class="hp-bar">
+            <div class="hp-fill"></div>
+        </div>
+
+        <span>${name}</span>
+    `;
+
+    troop.style.left = `${x - 35}px`;
+    troop.style.top = `${y - 35}px`;
+
+    troop.style.background = stats.color;
+
+    board.appendChild(troop);
+
+    const troopObj = {
+
+        element: troop,
+
+        name,
+
+        team,
+
+        hp: stats.hp,
+
+        maxHp: stats.hp,
+
+        damage: stats.damage,
+
+        speed: stats.speed,
+
+        x: x - 35,
+
+        y: y - 35
+
+    };
+
+    troops.push(troopObj);
+
+    addLog(`${name} invocado`);
+
+}
+
+/* =========================================
+   GAME LOOP
+========================================= */
+
+function gameLoop(){
+
+    troops.forEach(troop => {
+
+        moveTroop(troop);
+
+        updateTroop(troop);
+
+    });
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
+
+/* =========================================
+   MOVE TROOPS
+========================================= */
+
+function moveTroop(troop){
+
+    if(troop.team === "player"){
+
+        troop.y -= troop.speed;
+
+    }
+
+    troop.element.style.top =
+    `${troop.y}px`;
+
+}
+
+/* =========================================
+   UPDATE TROOP UI
+========================================= */
+
+function updateTroop(troop){
+
+    const hpPercent =
+    (troop.hp / troop.maxHp) * 100;
+
+    troop.element
+    .querySelector(".hp-fill")
+    .style.width = `${hpPercent}%`;
+
+}
+
+/* =========================================
+   BATTLE LOG
+========================================= */
 
 function addLog(message){
 
-    const logContainer =
+    const log =
     document.querySelector(".log-messages");
 
     const p = document.createElement("p");
 
     p.innerText = `⚔️ ${message}`;
 
-    logContainer.prepend(p);
+    log.prepend(p);
 
 }
