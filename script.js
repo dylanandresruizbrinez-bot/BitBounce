@@ -15,6 +15,8 @@ const cardsData = {
         hp: 150,
         damage: 20,
         speed: 1.2,
+        range: 40,
+        attackSpeed: 900,
         color: "#ff8800"
     },
 
@@ -22,6 +24,8 @@ const cardsData = {
         hp: 90,
         damage: 15,
         speed: 1.5,
+        range: 140,
+        attackSpeed: 700,
         color: "#00ffaa"
     },
 
@@ -29,6 +33,8 @@ const cardsData = {
         hp: 80,
         damage: 30,
         speed: 1,
+        range: 120,
+        attackSpeed: 1200,
         color: "#8b5cf6"
     },
 
@@ -36,6 +42,8 @@ const cardsData = {
         hp: 300,
         damage: 45,
         speed: 0.8,
+        range: 100,
+        attackSpeed: 1500,
         color: "#ff004c"
     }
 
@@ -175,27 +183,35 @@ else{
 
     board.appendChild(troop);
 
-    const troopObj = {
+const troopObj = {
 
-        element: troop,
+    element: troop,
 
-        name,
+    name,
 
-        team,
+    team,
 
-        hp: stats.hp,
+    hp: stats.hp,
 
-        maxHp: stats.hp,
+    maxHp: stats.hp,
 
-        damage: stats.damage,
+    damage: stats.damage,
 
-        speed: stats.speed,
+    speed: stats.speed,
 
-        x: x - 35,
+    range: stats.range,
 
-        y: y - 35
+    attackSpeed: stats.attackSpeed,
 
-    };
+    lastAttack: 0,
+
+    x: x - 35,
+
+    y: y - 35,
+
+    target: null
+
+};
 
     troops.push(troopObj);
 
@@ -271,20 +287,168 @@ gameLoop();
 
 function moveTroop(troop){
 
-    if(troop.team === "player"){
+    const enemy = findClosestEnemy(troop);
 
-        troop.y -= troop.speed;
+    troop.target = enemy;
+
+    /* =========================
+       IF ENEMY FOUND
+    ========================= */
+
+    if(enemy){
+
+        const dx =
+        enemy.x - troop.x;
+
+        const dy =
+        enemy.y - troop.y;
+
+        const distance =
+        Math.sqrt(dx * dx + dy * dy);
+
+        /* ATTACK RANGE */
+
+        if(distance <= troop.range){
+
+            attackTroop(
+                troop,
+                enemy
+            );
+
+            return;
+
+        }
+
+        /* MOVE TOWARD ENEMY */
+
+        const angle =
+        Math.atan2(dy, dx);
+
+        troop.x +=
+        Math.cos(angle) * troop.speed;
+
+        troop.y +=
+        Math.sin(angle) * troop.speed;
+
+    }
+    else{
+
+        /* NORMAL ADVANCE */
+
+        if(troop.team === "player"){
+
+            troop.y -= troop.speed;
+
+        }
+
+        if(troop.team === "enemy"){
+
+            troop.y += troop.speed;
+
+        }
 
     }
 
-    if(troop.team === "enemy"){
-
-        troop.y += troop.speed;
-
-    }
+    troop.element.style.left =
+    `${troop.x}px`;
 
     troop.element.style.top =
     `${troop.y}px`;
+
+}
+/* =========================================
+   FIND ENEMIES
+========================================= */
+
+function findClosestEnemy(currentTroop){
+
+    let closest = null;
+
+    let closestDistance = Infinity;
+
+    troops.forEach(enemy => {
+
+        if(enemy.team === currentTroop.team)
+            return;
+
+        const dx =
+        enemy.x - currentTroop.x;
+
+        const dy =
+        enemy.y - currentTroop.y;
+
+        const distance =
+        Math.sqrt(dx * dx + dy * dy);
+
+        if(distance < closestDistance){
+
+            closestDistance = distance;
+
+            closest = enemy;
+
+        }
+
+    });
+
+    return closest;
+
+}
+/* =========================================
+   ATTACK SYSTEM
+========================================= */
+
+function attackTroop(attacker, victim){
+
+    const now = Date.now();
+
+    if(
+        now - attacker.lastAttack
+        < attacker.attackSpeed
+    ){
+        return;
+    }
+
+    attacker.lastAttack = now;
+
+    victim.hp -= attacker.damage;
+
+    /* HIT EFFECT */
+
+    victim.element.classList.add("hit");
+
+    setTimeout(() => {
+
+        victim.element.classList.remove("hit");
+
+    }, 120);
+
+    addLog(
+        `${attacker.name} atacó ${victim.name}`
+    );
+
+    /* DEATH */
+
+    if(victim.hp <= 0){
+
+        destroyTroop(victim);
+
+    }
+
+}
+/* =========================================
+   DESTROY TROOP
+========================================= */
+
+function destroyTroop(troop){
+
+    addLog(
+        `${troop.name} fue destruido`
+    );
+
+    troop.element.remove();
+
+    troops =
+    troops.filter(t => t !== troop);
 
 }
 /* =========================================
