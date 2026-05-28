@@ -1,94 +1,435 @@
-```css
-body{
+*{
     margin:0;
-    background:#111827;
-    color:white;
-    font-family:Arial, sans-serif;
-    overflow:hidden;
+    padding:0;
+    box-sizing:border-box;
 }
 
-#arena{
-    width:100%;
-    height:70vh;
+body{
+    background:
+    linear-gradient(
+        to bottom,
+        #12002b,
+        #1f1147,
+        #0d0d1f
+    );
+
+    font-family:Arial, Helvetica, sans-serif;
+    color:white;
+
+    min-height:100vh;
+
     display:flex;
     flex-direction:column;
+    align-items:center;
+
+    overflow-x:hidden;
+}
+
+/* MENU */
+
+.main-menu{
+    text-align:center;
+    margin-top:20px;
+}
+
+.main-menu h1{
+    font-size:4rem;
+    color:#7df9ff;
+
+    text-shadow:
+    0 0 10px #7df9ff,
+    0 0 25px #00f7ff;
+}
+
+.main-menu p{
+    font-size:1.3rem;
+    color:#ffd369;
+    margin-top:5px;
+}
+
+.menu-buttons{
+    margin-top:20px;
+    display:flex;
+    gap:15px;
+}
+
+.menu-buttons button{
+    padding:12px 25px;
+    border:none;
+    border-radius:12px;
+
+    background:#00d9ff;
+    color:black;
+
+    font-weight:bold;
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.menu-buttons button:hover{
+    transform:scale(1.08);
+
+    box-shadow:
+    0 0 15px #00d9ff,
+    0 0 35px #00d9ff;
+}
+
+/* HUD */
+
+.hud{
+    width:90%;
+    max-width:1100px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-top:20px;
+}
+
+.timer{
+    font-size:2rem;
+    font-weight:bold;
+
+    color:#ffcb74;
+
+    text-shadow:0 0 10px orange;
+}
+
+.energy-container{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+}
+
+.energy-bar{
+    width:220px;
+    height:20px;
+
+    background:#222;
+    border-radius:20px;
+
+    overflow:hidden;
+
+    border:2px solid #7d4dff;
+}
+
+.energy-fill{
+    width:100%;
+    height:100%;
+
+    background:
+    linear-gradient(
+        90deg,
+        #9f5fff,
+        #00eaff
+    );
+
+    animation:energyPulse 2s infinite;
+}
+
+.energy-text{
+    margin-top:5px;
+}
+
+/* BOARD */
+
+.game-board{
     position:relative;
+
+    width:90%;
+    max-width:1100px;
+    height:600px;
+
+    margin-top:20px;
+
+    border:4px solid #00eaff;
+    border-radius:25px;
+
+    overflow:hidden;
+
+    background:
+    linear-gradient(
+        to bottom,
+        #402060,
+        #253b6e
+    );
+
+    box-shadow:
+    0 0 25px rgba(0,255,255,0.4);
 }
 
 .enemy-side,
 .player-side{
-    flex:1;
     position:relative;
+    width:100%;
+    height:50%;
 }
 
-#river{
-    height:8px;
-    background:cyan;
-    box-shadow:0 0 15px cyan;
+.enemy-side{
+    background:
+    linear-gradient(
+        to bottom,
+        #581845,
+        #2b0b3f
+    );
 }
+
+.player-side{
+    background:
+    linear-gradient(
+        to bottom,
+        #16395f,
+        #0f2238
+    );
+}
+
+/* RIVER */
+
+.river{
+    position:absolute;
+    top:50%;
+
+    width:100%;
+    height:70px;
+
+    transform:translateY(-50%);
+
+    background:#00bfff;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    box-shadow:
+    0 0 20px cyan;
+}
+
+.bridge{
+    width:120px;
+    height:100%;
+
+    background:#6b4f2a;
+}
+
+/* TOWERS */
 
 .tower{
-    width:70px;
-    height:70px;
-    background:#7c3aed;
     position:absolute;
-    border-radius:10px;
-    box-shadow:0 0 15px rgba(124,58,237,0.8);
+
+    width:90px;
+    height:90px;
+
+    border-radius:15px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #8a2be2,
+        #00e5ff
+    );
+
+    box-shadow:
+    0 0 15px cyan;
 }
 
 .king{
-    left:45%;
-    top:40%;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.enemy.king{
+    top:20px;
+}
+
+.player.king{
+    bottom:20px;
 }
 
 .left{
     left:20%;
-    top:50%;
 }
 
 .right{
     right:20%;
-    top:50%;
 }
 
-#cardsArea{
-    height:120px;
+.enemy.left,
+.enemy.right{
+    top:90px;
+}
+
+.player.left,
+.player.right{
+    bottom:90px;
+}
+
+/* CARDS */
+
+.cards-container{
+    width:90%;
+    max-width:1100px;
+
     display:flex;
     justify-content:center;
-    align-items:center;
     gap:15px;
-    background:#0f172a;
+
+    margin-top:20px;
 }
 
 .card{
-    width:90px;
-    height:110px;
-    background:#1e293b;
-    border:2px solid cyan;
-    border-radius:12px;
+    width:140px;
+    height:180px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #24243e,
+        #302b63
+    );
+
+    border:2px solid #00eaff;
+    border-radius:20px;
+
+    position:relative;
+
     display:flex;
     justify-content:center;
     align-items:center;
+    flex-direction:column;
+
     cursor:pointer;
-    transition:0.2s;
+
+    transition:0.3s;
+
+    box-shadow:
+    0 0 15px rgba(0,255,255,0.3);
 }
 
 .card:hover{
-    transform:translateY(-10px);
-    box-shadow:0 0 15px cyan;
+    transform:
+    translateY(-10px)
+    scale(1.05);
+
+    box-shadow:
+    0 0 20px cyan,
+    0 0 40px cyan;
 }
 
-#elixirBar{
-    width:300px;
-    height:20px;
-    background:#222;
+.cost{
+    position:absolute;
+    top:10px;
+    left:10px;
+
+    width:35px;
+    height:35px;
+
+    border-radius:50%;
+
+    background:#9f5fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:bold;
+}
+
+/* BATTLE LOG */
+
+.battle-log{
+    width:90%;
+    max-width:1100px;
+
+    margin-top:20px;
+
+    background:rgba(0,0,0,0.4);
+
+    border:2px solid #00eaff;
+    border-radius:15px;
+
+    padding:15px;
+}
+
+.battle-log h2{
+    margin-bottom:10px;
+}
+
+.log-messages{
+    max-height:120px;
+    overflow-y:auto;
+}
+
+.log-messages p{
+    margin:5px 0;
+}
+
+/* CONTROLS */
+
+.controls{
+    margin:20px 0;
+
+    display:flex;
+    gap:20px;
+}
+
+.controls button{
+    padding:12px 30px;
+
+    border:none;
     border-radius:10px;
-    overflow:hidden;
+
+    background:#ff006e;
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
 }
 
-#elixirFill{
-    width:50%;
-    height:100%;
-    background:linear-gradient(90deg,#9333ea,#06b6d4);
+.controls button:hover{
+    transform:scale(1.05);
+
+    box-shadow:
+    0 0 20px #ff006e;
 }
-```
+
+/* ANIMATIONS */
+
+@keyframes energyPulse{
+
+    0%{
+        filter:brightness(1);
+    }
+
+    50%{
+        filter:brightness(1.5);
+    }
+
+    100%{
+        filter:brightness(1);
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .cards-container{
+        flex-wrap:wrap;
+    }
+
+    .card{
+        width:120px;
+        height:160px;
+    }
+
+    .game-board{
+        height:500px;
+    }
+
+}
