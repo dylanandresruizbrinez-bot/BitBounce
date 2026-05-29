@@ -1,3 +1,95 @@
+/* =========================================
+   PLAYER DATA
+========================================= */
+
+let playerData = {
+
+    username: "",
+
+    level: 1,
+
+    xp: 0,
+
+    gold: 100,
+
+    gems: 10,
+
+    wins: 0,
+
+    losses: 0,
+
+    trophies: 0
+
+};
+/* =========================================
+   LOAD SAVE
+========================================= */
+
+function loadPlayer(){
+
+    const save =
+    localStorage.getItem(
+        "realmRushPlayer"
+    );
+
+    if(save){
+
+        playerData =
+        JSON.parse(save);
+
+    }
+
+}
+
+function savePlayer(){
+
+    localStorage.setItem(
+        "realmRushPlayer",
+        JSON.stringify(playerData)
+    );
+
+}
+/* =========================================
+   LOGIN SYSTEM
+========================================= */
+
+loadPlayer();
+
+const loginScreen =
+document.getElementById(
+    "login-screen"
+);
+
+const usernameInput =
+document.getElementById(
+    "username"
+);
+
+const startBtn =
+document.getElementById(
+    "start-game"
+);
+
+if(playerData.username){
+
+    loginScreen.style.display = "none";
+
+}
+
+startBtn.addEventListener("click", () => {
+
+    const username =
+    usernameInput.value.trim();
+
+    if(!username) return;
+
+    playerData.username = username;
+
+    savePlayer();
+
+    loginScreen.style.display = "none";
+
+});
 const cards = document.querySelectorAll(".card");
 const board = document.querySelector(".game-board");
 
@@ -62,6 +154,51 @@ const enemyDeck = [
 
 ];
 /* =========================================
+   BOT PERSONALITIES
+========================================= */
+
+const bots = [
+
+    {
+        name: "Ares",
+        style: "Aggro Rush",
+        speed: 2500,
+        favorite: "Guerrero"
+    },
+
+    {
+        name: "Nyx",
+        style: "Control Mage",
+        speed: 4500,
+        favorite: "Mago"
+    },
+
+    {
+        name: "Drakon",
+        style: "Heavy Beatdown",
+        speed: 6000,
+        favorite: "Dragón"
+    },
+
+    {
+        name: "Valkor",
+        style: "Balanced Pressure",
+        speed: 3500,
+        favorite: "Arquero"
+    }
+
+];
+let currentBot =
+bots[
+    Math.floor(
+        Math.random() * bots.length
+    )
+];
+
+addLog(
+    `Te enfrentas a ${currentBot.name} (${currentBot.style})`
+);
+/* =========================================
    ENABLE DRAG
 ========================================= */
 
@@ -88,6 +225,7 @@ board.addEventListener("dragover", (e) => {
     e.preventDefault();
 
 });
+
 
 /* =========================================
    DROP SYSTEM
@@ -246,32 +384,85 @@ function gameLoop(){
 
 function enemyAI(){
 
-    const randomCard =
+  function enemyAI(){
 
-    enemyDeck[
-        Math.floor(
-            Math.random() * enemyDeck.length
-        )
-    ];
+    let selectedCard;
 
-    const randomX =
+    /* =========================================
+       BOT PERSONALITY
+    ========================================= */
 
-    Math.random() *
-    (board.offsetWidth - 100) + 50;
+    const randomChance =
+    Math.random();
+
+    if(randomChance < 0.55){
+
+        selectedCard =
+        currentBot.favorite;
+
+    }
+    else{
+
+        selectedCard =
+
+        enemyDeck[
+            Math.floor(
+                Math.random() *
+                enemyDeck.length
+            )
+        ];
+
+    }
+
+    let randomX;
+
+    /* =========================================
+       DIFFERENT STRATEGIES
+    ========================================= */
+
+    if(currentBot.style === "Aggro Rush"){
+
+        randomX =
+        Math.random() *
+        board.offsetWidth;
+
+    }
+
+    if(currentBot.style === "Control Mage"){
+
+        randomX =
+        board.offsetWidth / 2 +
+        (Math.random() * 150 - 75);
+
+    }
+
+    if(currentBot.style === "Heavy Beatdown"){
+
+        randomX =
+        board.offsetWidth / 2;
+
+    }
+
+    if(currentBot.style === "Balanced Pressure"){
+
+        randomX =
+        Math.random() *
+        board.offsetWidth;
+
+    }
 
     const randomY =
-
-    Math.random() * 120 + 50;
+    Math.random() * 100 + 50;
 
     spawnTroop(
-        randomCard,
+        selectedCard,
         randomX,
         randomY,
         "enemy"
     );
 
     addLog(
-        `Enemigo invocó ${randomCard}`
+        `${currentBot.name} desplegó ${selectedCard}`
     );
 
 }
@@ -282,7 +473,7 @@ setInterval(() => {
 
     enemyAI();
 
-}, 4000);
+}, currentBot.speed);
 gameLoop();
 
 /* =========================================
