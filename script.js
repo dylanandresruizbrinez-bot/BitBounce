@@ -1,1151 +1,133 @@
-/* =========================================
-   PLAYER DATA
-========================================= */
-
-let playerData = {
-
-    username: "",
-
-    level: 1,
-
-    xp: 0,
-
-    gold: 100,
-
-    gems: 10,
-
-    wins: 0,
-
-    losses: 0,
-
-    trophies: 0
-
-};
-/* =========================================
-   LOAD SAVE
-========================================= */
-
-function loadPlayer(){
-
-    const save =
-    localStorage.getItem(
-        "realmRushPlayer"
-    );
-
-    if(save){
-
-        playerData =
-        JSON.parse(save);
-
-    }
-
-}
-
-function savePlayer(){
-
-    localStorage.setItem(
-        "realmRushPlayer",
-        JSON.stringify(playerData)
-    );
-
-}
-/* =========================================
-   LOGIN SYSTEM
-========================================= */
-
-loadPlayer();
-
-const loginScreen =
-document.getElementById(
-    "login-screen"
-);
-
-const usernameInput =
-document.getElementById(
-    "username"
-);
-
-const startBtn =
-document.getElementById(
-    "start-game"
-);
-
-if(playerData.username){
-
-    loginScreen.style.display = "none";
-
-}
-
-startBtn.addEventListener("click", () => {
-
-    const username =
-    usernameInput.value.trim();
-
-    if(!username) return;
-
-    playerData.username = username;
-
-    savePlayer();
-
-    loginScreen.style.display = "none";
-
-});
-const cards = document.querySelectorAll(".card");
-const board = document.querySelector(".game-board");
-
-let selectedCard = null;
-let projectiles = [];
-let particles = [];
-let troops = [];
-
-/* =========================================
-   CARDS DATA
-========================================= */
-
-const cardsData = {
-
-    "Guerrero": {
-        hp: 150,
-        damage: 20,
-        speed: 1.2,
-        range: 40,
-        attackSpeed: 900,
-        color: "#ff8800"
-    },
-
-    "Arquero": {
-        hp: 90,
-        damage: 15,
-        speed: 1.5,
-        range: 140,
-        attackSpeed: 700,
-        color: "#00ffaa"
-    },
-
-    "Mago": {
-        hp: 80,
-        damage: 30,
-        speed: 1,
-        range: 120,
-        attackSpeed: 1200,
-        color: "#8b5cf6"
-    },
-
-    "Dragón": {
-        hp: 300,
-        damage: 45,
-        speed: 0.8,
-        range: 100,
-        attackSpeed: 1500,
-        color: "#ff004c"
-    }
-
-};
-/* =========================================
-   ENEMY AI
-========================================= */
-
-const enemyDeck = [
-
-    "Guerrero",
-    "Arquero",
-    "Mago",
-    "Dragón"
-
-];
-/* =========================================
-   BOT PERSONALITIES
-========================================= */
-
-const bots = [
-
-    {
-        name: "Ares",
-        style: "Aggro Rush",
-        speed: 2500,
-        favorite: "Guerrero"
-    },
-
-    {
-        name: "Nyx",
-        style: "Control Mage",
-        speed: 4500,
-        favorite: "Mago"
-    },
-
-    {
-        name: "Drakon",
-        style: "Heavy Beatdown",
-        speed: 6000,
-        favorite: "Dragón"
-    },
-
-    {
-        name: "Valkor",
-        style: "Balanced Pressure",
-        speed: 3500,
-        favorite: "Arquero"
-    }
-
-];
-let currentBot =
-bots[
-    Math.floor(
-        Math.random() * bots.length
-    )
-];
-
-addLog(
-    `Te enfrentas a ${currentBot.name} (${currentBot.style})`
-);
-/* =========================================
-   ENABLE DRAG
-========================================= */
-
-cards.forEach(card => {
-
-    card.setAttribute("draggable", true);
-
-    card.addEventListener("dragstart", () => {
-
-        selectedCard = card;
-
-        card.classList.add("dragging");
-
-    });
-
-});
-
-/* =========================================
-   DRAG OVER
-========================================= */
-
-board.addEventListener("dragover", (e) => {
-
-    e.preventDefault();
-
-});
-
-
-/* =========================================
-   DROP SYSTEM
-========================================= */
-
-board.addEventListener("drop", (e) => {
-
-    e.preventDefault();
-
-    if(!selectedCard) return;
-
-    const boardRect =
-    board.getBoundingClientRect();
-
-    const x =
-    e.clientX - boardRect.left;
-
-    const y =
-    e.clientY - boardRect.top;
-
-    /* ONLY PLAYER SIDE */
-
-    if(y < board.offsetHeight / 2){
-
-        addLog(
-            "No puedes invocar en territorio enemigo"
-        );
-
-        return;
-
-    }
-
-    const troopName =
-    selectedCard.querySelector("h3").innerText;
-
-    spawnTroop(
-        troopName,
-        x,
-        y,
-        "player"
-    );
-
-    selectedCard.classList.remove("dragging");
-
-    selectedCard = null;
-
-});
-
-/* =========================================
-   SPAWN TROOP
-========================================= */
-
-function spawnTroop(name, x, y, team){
-
-    const stats = cardsData[name];
-
-    if(!stats) return;
-
-    const troop = document.createElement("div");
-
-    troop.classList.add("troop");
-troop.classList.add(team);
-    troop.innerHTML = `
-        <div class="hp-bar">
-            <div class="hp-fill"></div>
-        </div>
-
-        <span>${name}</span>
-    `;
-
-    troop.style.left = `${x - 35}px`;
-    troop.style.top = `${y - 35}px`;
-
-    if(team === "player"){
-
-    troop.style.background =
-    `linear-gradient(
-        135deg,
-        ${stats.color},
-        #ffffff
-    )`;
-
-}
-else{
-
-    troop.style.background =
-    `linear-gradient(
-        135deg,
-        #ff0033,
-        ${stats.color}
-    )`;
-
-}
-
-    board.appendChild(troop);
-
-const troopObj = {
-
-    element: troop,
-
-    name,
-
-    team,
-
-    hp: stats.hp,
-
-    maxHp: stats.hp,
-
-    damage: stats.damage,
-
-    speed: stats.speed,
-
-    range: stats.range,
-
-    attackSpeed: stats.attackSpeed,
-
-    lastAttack: 0,
-
-    x: x - 35,
-
-    y: y - 35,
-
-    target: null
-
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const paddleWidth = 10;
+const paddleHeight = 80;
+
+let leftPaddle = {
+    x: 20,
+    y: canvas.height / 2 - paddleHeight / 2
 };
 
-    troops.push(troopObj);
+let rightPaddle = {
+    x: canvas.width - 30,
+    y: canvas.height / 2 - paddleHeight / 2
+};
 
-    addLog(`${name} invocado`);
+let ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 8,
+    speedX: 5,
+    speedY: 3
+};
 
+const keys = {};
+
+document.addEventListener("keydown", e => {
+    keys[e.key] = true;
+});
+
+document.addEventListener("keyup", e => {
+    keys[e.key] = false;
+});
+
+function update() {
+
+    // Jugador izquierdo (W y S)
+    if (keys["w"] || keys["W"]) {
+        leftPaddle.y -= 6;
+    }
+
+    if (keys["s"] || keys["S"]) {
+        leftPaddle.y += 6;
+    }
+
+    // Jugador derecho (↑ y ↓)
+    if (keys["ArrowUp"]) {
+        rightPaddle.y -= 6;
+    }
+
+    if (keys["ArrowDown"]) {
+        rightPaddle.y += 6;
+    }
+
+    // Limitar paletas
+    leftPaddle.y = Math.max(0, Math.min(canvas.height - paddleHeight, leftPaddle.y));
+    rightPaddle.y = Math.max(0, Math.min(canvas.height - paddleHeight, rightPaddle.y));
+
+    // Movimiento pelota
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+    // Rebote arriba/abajo
+    if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+        ball.speedY *= -1;
+    }
+
+    // Colisión izquierda
+    if (
+        ball.x - ball.radius < leftPaddle.x + paddleWidth &&
+        ball.y > leftPaddle.y &&
+        ball.y < leftPaddle.y + paddleHeight
+    ) {
+        ball.speedX *= -1;
+    }
+
+    // Colisión derecha
+    if (
+        ball.x + ball.radius > rightPaddle.x &&
+        ball.y > rightPaddle.y &&
+        ball.y < rightPaddle.y + paddleHeight
+    ) {
+        ball.speedX *= -1;
+    }
+
+    // Reiniciar si sale
+    if (ball.x < 0 || ball.x > canvas.width) {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.speedX *= -1;
+    }
 }
 
-/* =========================================
-   GAME LOOP
-========================================= */
+function draw() {
 
-function gameLoop(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    troops.forEach(troop => {
+    // Paleta izquierda
+    ctx.fillStyle = "white";
+    ctx.fillRect(
+        leftPaddle.x,
+        leftPaddle.y,
+        paddleWidth,
+        paddleHeight
+    );
 
-        moveTroop(troop);
+    // Paleta derecha
+    ctx.fillRect(
+        rightPaddle.x,
+        rightPaddle.y,
+        paddleWidth,
+        paddleHeight
+    );
 
-        updateTroop(troop);
-       
+    // Pelota
+    ctx.beginPath();
+    ctx.arc(
+        ball.x,
+        ball.y,
+        ball.radius,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+}
 
-    });
-      updateProjectiles();
-   updateParticles();
-   
+function gameLoop() {
+    update();
+    draw();
     requestAnimationFrame(gameLoop);
-
-}
-/* =========================================
-   ENEMY SPAWN AI
-========================================= */
-
-function enemyAI(){
-
-  function enemyAI(){
-
-    let selectedCard;
-
-    /* =========================================
-       BOT PERSONALITY
-    ========================================= */
-
-    const randomChance =
-    Math.random();
-
-    if(randomChance < 0.55){
-
-        selectedCard =
-        currentBot.favorite;
-
-    }
-    else{
-
-        selectedCard =
-
-        enemyDeck[
-            Math.floor(
-                Math.random() *
-                enemyDeck.length
-            )
-        ];
-
-    }
-
-    let randomX;
-
-    /* =========================================
-       DIFFERENT STRATEGIES
-    ========================================= */
-
-    if(currentBot.style === "Aggro Rush"){
-
-        randomX =
-        Math.random() *
-        board.offsetWidth;
-
-    }
-
-    if(currentBot.style === "Control Mage"){
-
-        randomX =
-        board.offsetWidth / 2 +
-        (Math.random() * 150 - 75);
-
-    }
-
-    if(currentBot.style === "Heavy Beatdown"){
-
-        randomX =
-        board.offsetWidth / 2;
-
-    }
-
-    if(currentBot.style === "Balanced Pressure"){
-
-        randomX =
-        Math.random() *
-        board.offsetWidth;
-
-    }
-
-    const randomY =
-    Math.random() * 100 + 50;
-
-    spawnTroop(
-        selectedCard,
-        randomX,
-        randomY,
-        "enemy"
-    );
-
-    addLog(
-        `${currentBot.name} desplegó ${selectedCard}`
-    );
-
 }
 
-/* SPAWN LOOP */
-
-setInterval(() => {
-
-    enemyAI();
-
-}, currentBot.speed);
 gameLoop();
-
-/* =========================================
-   MOVE TROOPS
-========================================= */
-
-function moveTroop(troop){
-
-    const enemy = findClosestEnemy(troop);
-
-    troop.target = enemy;
-
-    /* =========================
-       IF ENEMY FOUND
-    ========================= */
-
-    if(enemy){
-
-        const dx =
-        enemy.x - troop.x;
-
-        const dy =
-        enemy.y - troop.y;
-
-        const distance =
-        Math.sqrt(dx * dx + dy * dy);
-
-        /* ATTACK RANGE */
-
-        if(distance <= troop.range){
-
-            attackTroop(
-                troop,
-                enemy
-            );
-
-            return;
-
-        }
-
-        /* MOVE TOWARD ENEMY */
-
-        const angle =
-        Math.atan2(dy, dx);
-
-        troop.x +=
-        Math.cos(angle) * troop.speed;
-
-        troop.y +=
-        Math.sin(angle) * troop.speed;
-
-    }
-    else{
-
-        /* NORMAL ADVANCE */
-
-        if(troop.team === "player"){
-
-            troop.y -= troop.speed;
-
-        }
-
-        if(troop.team === "enemy"){
-
-            troop.y += troop.speed;
-
-        }
-
-    }
-
-    troop.element.style.left =
-    `${troop.x}px`;
-
-    troop.element.style.top =
-    `${troop.y}px`;
-
-}
-/* =========================================
-   FIND ENEMIES
-========================================= */
-
-function findClosestEnemy(currentTroop){
-
-    let closest = null;
-
-    let closestDistance = Infinity;
-
-    troops.forEach(enemy => {
-
-        if(enemy.team === currentTroop.team)
-            return;
-
-        const dx =
-        enemy.x - currentTroop.x;
-
-        const dy =
-        enemy.y - currentTroop.y;
-
-        const distance =
-        Math.sqrt(dx * dx + dy * dy);
-
-        if(distance < closestDistance){
-
-            closestDistance = distance;
-
-            closest = enemy;
-
-        }
-
-    });
-
-    return closest;
-
-}
-/* =========================================
-   ATTACK SYSTEM
-========================================= */
-
-function attackTroop(attacker, victim){
-
-    const now = Date.now();
-
-    if(
-        now - attacker.lastAttack
-        < attacker.attackSpeed
-    ){
-        return;
-    }
-
-    attacker.lastAttack = now;
-
-    /* =========================
-       RANGED ATTACKS
-    ========================= */
-
-    if(
-        attacker.name === "Arquero" ||
-        attacker.name === "Mago" ||
-        attacker.name === "Dragón"
-    ){
-
-        spawnProjectile(
-            attacker,
-            victim
-        );
-
-    }
-    else{
-
-        /* MELEE */
-
-        victim.hp -= attacker.damage;
-
-        hitEffect(victim);
-
-        addLog(
-            `${attacker.name} golpeó ${victim.name}`
-        );
-
-        if(victim.hp <= 0){
-
-            destroyTroop(victim);
-
-        }
-
-    }
-
-}
-/* =========================================
-   PROJECTILES
-========================================= */
-
-function spawnProjectile(attacker, victim){
-
-    const projectile =
-    document.createElement("div");
-
-    projectile.classList.add("projectile");
-
-    /* =========================
-       TYPES
-    ========================= */
-
-    if(attacker.name === "Arquero"){
-
-        projectile.classList.add("arrow");
-
-    }
-
-    if(attacker.name === "Mago"){
-
-        projectile.classList.add("magic");
-
-    }
-
-    if(attacker.name === "Dragón"){
-
-        projectile.classList.add("fire");
-
-    }
-
-    projectile.style.left =
-    `${attacker.x + 25}px`;
-
-    projectile.style.top =
-    `${attacker.y + 25}px`;
-
-    board.appendChild(projectile);
-
-    const projectileObj = {
-
-        element: projectile,
-
-        attacker,
-
-        victim,
-
-        damage: attacker.damage,
-
-        x: attacker.x + 25,
-
-        y: attacker.y + 25,
-
-        speed: 5,
-
-        trailTimer: 0
-
-    };
-
-    projectiles.push(projectileObj);
-
-}
-/* =========================================
-   UPDATE PROJECTILES
-========================================= */
-
-function updateProjectiles(){
-
-    projectiles.forEach(projectile => {
-
-        if(
-            !projectile.victim ||
-            !troops.includes(projectile.victim)
-        ){
-
-            projectile.element.remove();
-
-            projectiles =
-            projectiles.filter(
-                p => p !== projectile
-            );
-
-            return;
-
-        }
-
-        const dx =
-        projectile.victim.x - projectile.x;
-
-        const dy =
-        projectile.victim.y - projectile.y;
-
-        const distance =
-        Math.sqrt(dx * dx + dy * dy);
-
-        /* =========================
-           TRAIL EFFECT
-        ========================= */
-
-        projectile.trailTimer++;
-
-        if(projectile.trailTimer > 2){
-
-            spawnTrailParticle(
-                projectile.x,
-                projectile.y,
-                projectile.attacker.name
-            );
-
-            projectile.trailTimer = 0;
-
-        }
-
-        /* =========================
-           HIT
-        ========================= */
-
-        if(distance < 25){
-
-            projectile.victim.hp -=
-            projectile.damage;
-
-            hitEffect(projectile.victim);
-
-            spawnImpactParticles(
-                projectile.x,
-                projectile.y,
-                projectile.attacker.name
-            );
-
-            addLog(
-                `${projectile.attacker.name} impactó ${projectile.victim.name}`
-            );
-
-            if(projectile.victim.hp <= 0){
-
-                destroyTroop(
-                    projectile.victim
-                );
-
-            }
-
-            projectile.element.remove();
-
-            projectiles =
-            projectiles.filter(
-                p => p !== projectile
-            );
-
-            return;
-
-        }
-
-        /* =========================
-           MOVE
-        ========================= */
-
-        const angle =
-        Math.atan2(dy, dx);
-
-        projectile.x +=
-        Math.cos(angle) *
-        projectile.speed;
-
-        projectile.y +=
-        Math.sin(angle) *
-        projectile.speed;
-
-        projectile.element.style.left =
-        `${projectile.x}px`;
-
-        projectile.element.style.top =
-        `${projectile.y}px`;
-
-    });
-
-}
-/* =========================================
-   PARTICLES
-========================================= */
-
-function spawnImpactParticles(x, y, type){
-
-    for(let i = 0; i < 10; i++){
-
-        createParticle(
-            x,
-            y,
-            type,
-            true
-        );
-
-    }
-
-}
-
-function spawnTrailParticle(x, y, type){
-
-    createParticle(
-        x,
-        y,
-        type,
-        false
-    );
-
-}
-
-function createParticle(x, y, type, explosive){
-
-    const particle =
-    document.createElement("div");
-
-    particle.classList.add("particle");
-
-    /* COLORS */
-
-    if(type === "Arquero"){
-
-        particle.style.background =
-        "#ffe082";
-
-    }
-
-    if(type === "Mago"){
-
-        particle.style.background =
-        "#b388ff";
-
-    }
-
-    if(type === "Dragón"){
-
-        particle.style.background =
-        "#ff5722";
-
-    }
-
-    const size =
-    explosive
-    ?
-    Math.random() * 12 + 6
-    :
-    Math.random() * 6 + 3;
-
-    particle.style.width =
-    `${size}px`;
-
-    particle.style.height =
-    `${size}px`;
-
-    particle.style.left =
-    `${x}px`;
-
-    particle.style.top =
-    `${y}px`;
-
-    board.appendChild(particle);
-
-    const angle =
-    Math.random() * Math.PI * 2;
-
-    const speed =
-    explosive
-    ?
-    Math.random() * 4 + 1
-    :
-    Math.random() * 2;
-
-    const particleObj = {
-
-        element: particle,
-
-        x,
-
-        y,
-
-        vx:
-        Math.cos(angle) * speed,
-
-        vy:
-        Math.sin(angle) * speed,
-
-        life:
-        explosive ? 40 : 20
-
-    };
-
-    particles.push(particleObj);
-
-}
-/* =========================================
-   PARTICLES
-========================================= */
-
-function spawnImpactParticles(x, y, type){
-
-    for(let i = 0; i < 10; i++){
-
-        createParticle(
-            x,
-            y,
-            type,
-            true
-        );
-
-    }
-
-}
-
-function spawnTrailParticle(x, y, type){
-
-    createParticle(
-        x,
-        y,
-        type,
-        false
-    );
-
-}
-
-function createParticle(x, y, type, explosive){
-
-    const particle =
-    document.createElement("div");
-
-    particle.classList.add("particle");
-
-    /* COLORS */
-
-    if(type === "Arquero"){
-
-        particle.style.background =
-        "#ffe082";
-
-    }
-
-    if(type === "Mago"){
-
-        particle.style.background =
-        "#b388ff";
-
-    }
-
-    if(type === "Dragón"){
-
-        particle.style.background =
-        "#ff5722";
-
-    }
-
-    const size =
-    explosive
-    ?
-    Math.random() * 12 + 6
-    :
-    Math.random() * 6 + 3;
-
-    particle.style.width =
-    `${size}px`;
-
-    particle.style.height =
-    `${size}px`;
-
-    particle.style.left =
-    `${x}px`;
-
-    particle.style.top =
-    `${y}px`;
-
-    board.appendChild(particle);
-
-    const angle =
-    Math.random() * Math.PI * 2;
-
-    const speed =
-    explosive
-    ?
-    Math.random() * 4 + 1
-    :
-    Math.random() * 2;
-
-    const particleObj = {
-
-        element: particle,
-
-        x,
-
-        y,
-
-        vx:
-        Math.cos(angle) * speed,
-
-        vy:
-        Math.sin(angle) * speed,
-
-        life:
-        explosive ? 40 : 20
-
-    };
-
-    particles.push(particleObj);
-
-}
-/* =========================================
-   UPDATE PARTICLES
-========================================= */
-
-function updateParticles(){
-
-    particles.forEach(particle => {
-
-        particle.x += particle.vx;
-
-        particle.y += particle.vy;
-
-        particle.life--;
-
-        particle.element.style.left =
-        `${particle.x}px`;
-
-        particle.element.style.top =
-        `${particle.y}px`;
-
-        particle.element.style.opacity =
-        particle.life / 40;
-
-        particle.element.style.transform =
-        `scale(${particle.life / 20})`;
-
-        if(particle.life <= 0){
-
-            particle.element.remove();
-
-            particles =
-            particles.filter(
-                p => p !== particle
-            );
-
-        }
-
-    });
-
-}
-/* =========================================
-   HIT EFFECT
-========================================= */
-
-function hitEffect(victim){
-
-    victim.element.classList.add("hit");
-
-    setTimeout(() => {
-
-        victim.element.classList.remove("hit");
-
-    }, 120);
-
-}
-/* =========================================
-   DESTROY TROOP
-========================================= */
-
-function destroyTroop(troop){
-
-    addLog(
-        `${troop.name} fue destruido`
-    );
-
-    troop.element.remove();
-
-    troops =
-    troops.filter(t => t !== troop);
-
-}
-/* =========================================
-   UPDATE TROOP UI
-========================================= */
-
-function updateTroop(troop){
-
-    const hpPercent =
-    (troop.hp / troop.maxHp) * 100;
-
-    troop.element
-    .querySelector(".hp-fill")
-    .style.width = `${hpPercent}%`;
-
-}
-
-/* =========================================
-   BATTLE LOG
-========================================= */
-
-function addLog(message){
-
-    const log =
-    document.querySelector(".log-messages");
-
-    const p = document.createElement("p");
-
-    p.innerText = `⚔️ ${message}`;
-
-    log.prepend(p);
-
-}
