@@ -1,13 +1,505 @@
-body {
-    margin: 0;
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* ==========================
+   BITBOUNCE
+   STYLE.CSS
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
-canvas {
-    border: 4px solid white;
-    background: black;
+body{
+    background:
+    radial-gradient(circle at center,
+    #111 0%,
+    #090909 50%,
+    #000 100%);
+
+    color:white;
+    min-height:100vh;
+    overflow:hidden;
+}
+
+/* ==========================
+   PANTALLAS
+========================== */
+
+.screen{
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    gap:20px;
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* ==========================
+   LOGO
+========================== */
+
+.logo{
+
+    font-size:70px;
+    font-weight:900;
+
+    color:#00ffff;
+
+    text-shadow:
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
+}
+
+.subtitle{
+
+    color:#bbb;
+
+    letter-spacing:4px;
+}
+
+/* ==========================
+   PANEL JUGADOR
+========================== */
+
+.player-panel{
+
+    width:420px;
+
+    background:rgba(255,255,255,.05);
+
+    border:2px solid #00ffff;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    box-shadow:
+    0 0 10px #00ffff44,
+    0 0 20px #00ffff22;
+}
+
+.rank-card h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.rank-info{
+
+    text-align:center;
+
+    font-size:24px;
+
+    margin-bottom:15px;
+}
+
+.exp-bar{
+
+    width:100%;
+    height:20px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:#111;
+
+    border:1px solid #00ffff;
+}
+
+.exp-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    #00ffff,
+    #00ff88
+    );
+
+    transition:.3s;
+}
+
+#expText{
+
+    margin-top:10px;
+
+    text-align:center;
+}
+
+.currency{
+
+    margin-top:15px;
+
+    text-align:center;
+
+    font-size:22px;
+}
+
+/* ==========================
+   BOTONES
+========================== */
+
+.menu-buttons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+}
+
+.menu-btn{
+
+    width:320px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:15px;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(
+    90deg,
+    #00aaff,
+    #0066ff
+    );
+
+    transition:.2s;
+
+    box-shadow:
+    0 0 10px #0088ff;
+}
+
+.menu-btn:hover{
+
+    transform:scale(1.05);
+
+    box-shadow:
+    0 0 15px #00ffff,
+    0 0 25px #00ffff;
+}
+
+.secondary{
+
+    background:
+    linear-gradient(
+    90deg,
+    #444,
+    #666
+    );
+}
+
+.back-btn{
+
+    margin-top:20px;
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    background:#333;
+
+    color:white;
+}
+
+.back-btn:hover{
+
+    background:#555;
+}
+
+/* ==========================
+   BOT LIST
+========================== */
+
+.bot-list{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(4, 220px);
+
+    gap:15px;
+
+    padding:20px;
+
+    max-height:600px;
+
+    overflow:auto;
+}
+
+/* ==========================
+   TIENDA
+========================== */
+
+.store-tabs{
+
+    display:flex;
+
+    gap:15px;
+}
+
+.tab-btn{
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:#222;
+}
+
+.tab-btn.active{
+
+    background:#00c8ff;
+}
+
+#storeContent{
+
+    width:80%;
+
+    min-height:350px;
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid #00ffff;
+
+    border-radius:20px;
+
+    padding:20px;
+}
+
+/* ==========================
+   ESTADISTICAS
+========================== */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2, 250px);
+
+    gap:20px;
+}
+
+.stat-card{
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid #00ffff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    text-align:center;
+}
+
+.stat-card span{
+
+    display:block;
+
+    margin-top:10px;
+
+    font-size:30px;
+
+    color:#00ffff;
+}
+
+/* ==========================
+   HUD
+========================== */
+
+.topHud{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 40px;
+
+    color:white;
+
+    font-size:28px;
+}
+
+.playerScore{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+}
+
+.centerHud{
+
+    font-size:20px;
+
+    color:#ff9900;
+}
+
+/* ==========================
+   CANVAS
+========================== */
+
+#gameCanvas{
+
+    background:black;
+
+    border:4px solid #00ffff;
+
+    border-radius:20px;
+
+    box-shadow:
+    0 0 15px #00ffff,
+    0 0 30px #00ffff55;
+}
+
+/* ==========================
+   BOTTOM HUD
+========================== */
+
+.bottomHud{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:15px;
+}
+
+.bottomHud button{
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:#222;
+
+    color:white;
+}
+
+.bottomHud button:hover{
+
+    background:#444;
+}
+
+/* ==========================
+   MODALES
+========================== */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+    rgba(0,0,0,.7);
+}
+
+.modal-content{
+
+    background:#111;
+
+    border:2px solid #00ffff;
+
+    border-radius:20px;
+
+    padding:40px;
+
+    min-width:350px;
+
+    text-align:center;
+
+    box-shadow:
+    0 0 20px #00ffff;
+}
+
+.modal-content h2{
+
+    margin-bottom:20px;
+}
+
+.modal-content button{
+
+    margin-top:15px;
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:#00aaff;
+
+    color:white;
+}
+
+/* ==========================
+   SCROLL
+========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#00ffff;
+
+    border-radius:10px;
+}
+
+::-webkit-scrollbar-track{
+
+    background:#111;
 }
