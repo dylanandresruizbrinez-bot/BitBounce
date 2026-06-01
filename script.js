@@ -149,9 +149,63 @@ const ranks = [
 // ---------- 20 BOTS ----------
 
 const bots = [
+    const rankBots = {
+
+    "🪨 Hierro": [
+        "PixelKai",
+        "NovaDash",
+        "ZeroByte"
+    ],
+
+    "🥉 Bronce": [
+        "FluxRider",
+        "HyperAce"
+    ],
+
+    "🥈 Plata": [
+        "VortexYT",
+        "QuantumLeo"
+    ],
+
+    "🥇 Oro": [
+        "ShadowPing",
+        "ByteStorm"
+    ],
+
+    "💿 Platino": [
+        "ElectroRay",
+        "NeonFox"
+    ],
+
+    "💚 Esmeralda": [
+        "BlitzMax",
+        "OrbitPlay"
+    ],
+
+    "💙 Zafiro": [
+        "CyberDani",
+        "DarkPulse"
+    ],
+
+    "❤️ Rubí": [
+        "LunarKick",
+        "GlitchWolf"
+    ],
+
+    "💎 Diamante": [
+        "ZenithPro",
+        "TitanByte",
+        "ApexZero"
+    ]
+};
 
     {
         name: "PixelKai",
+         rank: "🪨 Hierro",
+    level: 5,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.60,
         speed: 4,
         aggression: 50
@@ -159,6 +213,11 @@ const bots = [
 
     {
         name: "NovaDash",
+         rank: "🪨 Hierro",
+    level: 10,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.65,
         speed: 5,
         aggression: 70
@@ -166,13 +225,23 @@ const bots = [
 
     {
         name: "ZeroByte",
+         rank: "Bronce 🥉",
+    level: 15,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.70,
         speed: 4,
         aggression: 30
     },
 
     {
-        name: "FluxRider",
+        name: "FluxRider",,
+         rank: "Bronce 🥉",
+    level: 20,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.75,
         speed: 5,
         aggression: 90
@@ -180,6 +249,11 @@ const bots = [
 
     {
         name: "HyperAce",
+         rank: "Plata 🥈",
+    level: 25,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.80,
         speed: 6,
         aggression: 80
@@ -187,6 +261,11 @@ const bots = [
 
     {
         name: "VortexYT",
+         rank: "Plata 🥈",
+    level: 30,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.82,
         speed: 6,
         aggression: 60
@@ -194,6 +273,11 @@ const bots = [
 
     {
         name: "QuantumLeo",
+        rank: "Oro 🥇",
+    level: 30,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.84,
         speed: 6,
         aggression: 70
@@ -201,6 +285,11 @@ const bots = [
 
     {
         name: "ShadowPing",
+        rank: "Oro 🥇",
+    level: 35,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.85,
         speed: 6,
         aggression: 80
@@ -208,6 +297,11 @@ const bots = [
 
     {
         name: "ByteStorm",
+        rank: "Platino 💿",
+    level: 40,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.87,
         speed: 7,
         aggression: 75
@@ -215,6 +309,11 @@ const bots = [
 
     {
         name: "ElectroRay",
+        rank: "Platino 💿",
+    level: 45,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.88,
         speed: 7,
         aggression: 85
@@ -222,6 +321,11 @@ const bots = [
 
     {
         name: "NeonFox",
+        rank: "Esmeralda 💚",
+    level: 50,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.89,
         speed: 7,
         aggression: 80
@@ -229,6 +333,11 @@ const bots = [
 
     {
         name: "BlitzMax",
+        rank: "Esmeralda 💚",
+    level: 55,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.90,
         speed: 8,
         aggression: 95
@@ -236,6 +345,11 @@ const bots = [
 
     {
         name: "OrbitPlay",
+        rank: "Esmeralda 💚",
+    level: 55,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.91,
         speed: 8,
         aggression: 40
@@ -243,6 +357,11 @@ const bots = [
 
     {
         name: "CyberDani",
+        rank: "Zafiro 💙",
+    level: 60,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.92,
         speed: 8,
         aggression: 65
@@ -250,6 +369,11 @@ const bots = [
 
     {
         name: "DarkPulse",
+        rank: "Rubí ❤️",
+    level: 65,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.93,
         speed: 8,
         aggression: 75
@@ -257,6 +381,11 @@ const bots = [
 
     {
         name: "ZenithPro",
+        rank: "Rubí ❤️",
+    level: 70,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.94,
         speed: 9,
         aggression: 90
@@ -264,6 +393,11 @@ const bots = [
 
     {
         name: "LunarKick",
+        rank: "Rubí ❤️",
+    level: 75,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.95,
         speed: 9,
         aggression: 80
@@ -271,6 +405,11 @@ const bots = [
 
     {
         name: "GlitchWolf",
+        rank: "Diamante 💎",
+    level: 80,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.96,
         speed: 9,
         aggression: 50
@@ -278,6 +417,11 @@ const bots = [
 
     {
         name: "TitanByte",
+        rank: "Diamante 💎",
+    level: 85,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.97,
         speed: 10,
         aggression: 95
@@ -285,6 +429,11 @@ const bots = [
 
     {
         name: "ApexZero",
+        rank: "Diamante 💎",
+    level: 100,
+
+    rewardExp: 100,
+    rewardCoins: 50,
         reaction: 0.99,
         speed: 11,
         aggression: 100
@@ -391,6 +540,26 @@ function updateRank() {
     playerData.rank = currentRank.name;
 
 }
+function getRandomBotForRank() {
+
+    const playerRank =
+        playerData.rank;
+
+    const availableNames =
+        rankBots[playerRank];
+
+    const availableBots =
+        bots.filter(bot =>
+            availableNames.includes(bot.name)
+        );
+
+    return availableBots[
+        Math.floor(
+            Math.random() *
+            availableBots.length
+        )
+    ];
+}
 
 // ---------- UI ----------
 
@@ -404,22 +573,89 @@ function updatePlayerUI() {
     coinsDisplay.textContent =
         playerData.coins;
 
-    expText.textContent =
-        playerData.exp + " EXP";
+    let currentIndex =
+        ranks.findIndex(
+            r => r.name === playerData.rank
+        );
+
+    let currentRank =
+        ranks[currentIndex];
+
+    let nextRank =
+        ranks[currentIndex + 1];
+
+    if (!nextRank) {
+
+        expFill.style.width =
+            "100%";
+
+        expText.textContent =
+            "MAX";
+
+        return;
+    }
+
+    let currentExp =
+        playerData.exp -
+        currentRank.exp;
+
+    let neededExp =
+        nextRank.exp -
+        currentRank.exp;
 
     let percent =
-        Math.min(
-            (playerData.exp / 50000) * 100,
-            100
-        );
+        (currentExp / neededExp) * 100;
 
     expFill.style.width =
         percent + "%";
 
+    expText.textContent =
+        `${currentExp} / ${neededExp} EXP`;
 }
 
 updatePlayerUI();
+const shopItems = [
 
+    {
+        id:"red",
+        type:"color",
+        value:"#ff0000",
+        price:100
+    },
+
+    {
+        id:"blue",
+        type:"color",
+        value:"#0066ff",
+        price:100
+    },
+
+    {
+        id:"green",
+        type:"color",
+        value:"#00ff66",
+        price:100
+    }
+
+];
+function buyItem(item) {
+
+    if (
+        playerData.coins <
+        item.price
+    ) return;
+
+    playerData.coins -=
+        item.price;
+
+    playerData.unlockedColors.push(
+        item.value
+    );
+
+    saveGame();
+
+    updatePlayerUI();
+}
 // ---------- MENUS ----------
 
 function hideAllScreens() {
@@ -447,36 +683,9 @@ function openScreen(screen) {
 const botList =
 document.getElementById("botList");
 
-function generateBotList() {
 
-    botList.innerHTML = "";
 
-    bots.forEach(bot => {
 
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "menu-btn";
-
-        button.textContent =
-            bot.name;
-
-        button.onclick = () => {
-
-            selectedBot = bot;
-
-            startOnlineMatch(bot);
-
-        };
-
-        botList.appendChild(button);
-
-    });
-
-}
-
-generateBotList();
 
 // ---------- EVENTOS TECLADO ----------
 
@@ -502,7 +711,16 @@ document.addEventListener(
 
 btnOnline.onclick = () => {
 
-    openScreen(onlineMenu);
+    const rival =
+        getRandomBotForRank();
+
+    selectedBot = rival;
+
+    setTimeout(() => {
+
+        startOnlineMatch(rival);
+
+    }, 1500);
 
 };
 
@@ -565,7 +783,8 @@ function startOnlineMatch(bot) {
     gameMode = "online";
 
     leftNameText.textContent = "Jugador";
-    rightNameText.textContent = bot.name;
+    rightNameText.textContent =
+`${bot.name} Lv.${bot.level}`;
 
     resetMatch();
 
@@ -887,9 +1106,11 @@ function endMatch() {
 
         playerData.wins++;
 
-        playerData.exp += 100;
+        playerData.exp +=
+selectedBot.rewardExp;
 
-        playerData.coins += 50;
+playerData.coins +=
+selectedBot.rewardCoins;
 
         alert(
             "Victoria\n+100 EXP\n+50 Monedas"
