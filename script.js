@@ -321,7 +321,7 @@ const bots = [
 
     {
         name: "NeonFox",
-        rank: "💚 Esmeralda"",
+        rank: "💚 Esmeralda",
     level: 50,
 
     rewardExp: 100,
@@ -333,7 +333,7 @@ const bots = [
 
     {
         name: "BlitzMax",
-        rank: "💚 Esmeralda"",
+        rank: "💚 Esmeralda",
     level: 55,
 
     rewardExp: 100,
