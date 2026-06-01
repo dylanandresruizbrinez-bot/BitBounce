@@ -3,13 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ping Pong</title>
+    <title>BitBounce</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <canvas id="gameCanvas" width="800" height="500"></canvas>
+    <!-- PANTALLA PRINCIPAL -->
+    <div id="mainMenu" class="screen">
+
+        <div class="logo-container">
+            <h1 class="logo">BITBOUNCE</h1>
+            <p class="subtitle">Arcade Competitivo</p>
+        </div>
+
+        <div class="player-panel">
+
+            <div class="rank-card">
+                <h3>Jugador</h3>
+
+                <div class="rank-info">
+                    <span id="rankName">🪨 Hierro</span>
+                </div>
+
+                <div class="exp-bar">
+                    <div id="expFill" class="exp-fill"></div>
+                </div>
+
+                <p id="expText">0 / 500 EXP</p>
+
+                <div class="currency">
+                    🪙 <span id="coinsDisplay">0</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="menu-buttons">
+
+            <button id="btnPVP" class="menu-btn">
+                ⚔️ Jugador vs Jugador
+            </button>
+
+            <button id="btnOnline" class="menu-btn">
+                🌐 Online
+            </button>
+
+            <button id="btnDuos" class="menu-btn">
+                👥 Duplas 2vs2
+            </button>
+
+            <button id="btnTraining" class="menu-btn">
+                🎯 Entrenamiento
+            </button>
+
+            <button id="btnStore" class="menu-btn secondary">
+                🛒 Tienda
+            </button>
+
+            <button id="btnStats" class="menu-btn secondary">
+                📊 Estadísticas
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- SELECCIÓN DE BOT -->
+    <div id="onlineMenu" class="screen hidden">
+
+        <h2>Seleccionar Rival</h2>
+
+        <div id="botList" class="bot-list">
+
+            <!-- Se llena desde JS -->
+
+        </div>
+
+        <button id="backToMain1" class="back-btn">
+            ← Volver
+        </button>
+
+    </div>
+
+    <!-- TIENDA -->
+    <div id="storeMenu" class="screen hidden">
+
+        <h2>🛒 Tienda</h2>
+
+        <div class="store-tabs">
+
+            <button class="tab-btn active" data-tab="colors">
+                Colores
+            </button>
+
+            <button class="tab-btn" data-tab="paddles">
+                Paletas
+            </button>
+
+            <button class="tab-btn" data-tab="balls">
+                Pelotas
+            </button>
+
+            <button class="tab-btn" data-tab="sounds">
+                Sonidos
+            </button>
+
+        </div>
+
+        <div id="storeContent">
+
+            <!-- JS -->
+
+        </div>
+
+        <button id="backToMain2" class="back-btn">
+            ← Volver
+        </button>
+
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div id="statsMenu" class="screen hidden">
+
+        <h2>📊 Estadísticas</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Victorias</h3>
+                <span id="winsStat">0</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Derrotas</h3>
+                <span id="lossesStat">0</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Partidas</h3>
+                <span id="matchesStat">0</span>
+            </div>
+
+            <div class="stat-card">
+                <h3>Rango</h3>
+                <span id="rankStat">Hierro</span>
+            </div>
+
+        </div>
+
+        <button id="backToMain3" class="back-btn">
+            ← Volver
+        </button>
+
+    </div>
+
+    <!-- PANTALLA DE JUEGO -->
+    <div id="gameScreen" class="screen hidden">
+
+        <div class="topHud">
+
+            <div class="playerScore">
+                <span id="leftName">Jugador</span>
+                <span id="leftScore">0</span>
+            </div>
+
+            <div class="centerHud">
+
+                <span id="hitCounter">
+                    Golpes: 0
+                </span>
+
+            </div>
+
+            <div class="playerScore">
+                <span id="rightScore">0</span>
+                <span id="rightName">Rival</span>
+            </div>
+
+        </div>
+
+        <canvas
+            id="gameCanvas"
+            width="1200"
+            height="650">
+        </canvas>
+
+        <div class="bottomHud">
+
+            <button id="pauseBtn">
+                ⏸ Pausa
+            </button>
+
+            <button id="leaveGameBtn">
+                🚪 Salir
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- PAUSA -->
+    <div id="pauseMenu" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h2>Pausa</h2>
+
+            <button id="resumeBtn">
+                Continuar
+            </button>
+
+            <button id="exitMatchBtn">
+                Salir de la partida
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- FIN DE PARTIDA -->
+    <div id="resultScreen" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h2 id="resultTitle">
+                Victoria
+            </h2>
+
+            <p>
+                EXP Ganada:
+                <span id="earnedExp">0</span>
+            </p>
+
+            <p>
+                Monedas Ganadas:
+                <span id="earnedCoins">0</span>
+            </p>
+
+            <button id="continueBtn">
+                Continuar
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="hitSound"></audio>
+    <audio id="scoreSound"></audio>
 
     <script src="script.js"></script>
+
 </body>
 </html>
