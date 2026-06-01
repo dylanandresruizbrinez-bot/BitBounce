@@ -147,8 +147,6 @@ const ranks = [
 ];
 
 // ---------- 20 BOTS ----------
-
-const bots = [
     const rankBots = {
 
     "🪨 Hierro": [
@@ -198,6 +196,8 @@ const bots = [
         "ApexZero"
     ]
 };
+const bots = [
+
 
     {
         name: "PixelKai",
@@ -225,7 +225,7 @@ const bots = [
 
     {
         name: "ZeroByte",
-         rank: "Bronce 🥉",
+         rank: "🥉 Bronce",
     level: 15,
 
     rewardExp: 100,
@@ -236,8 +236,8 @@ const bots = [
     },
 
     {
-        name: "FluxRider",,
-         rank: "Bronce 🥉",
+        name: "FluxRider",
+         rank: "🥉 Bronce",
     level: 20,
 
     rewardExp: 100,
@@ -249,7 +249,7 @@ const bots = [
 
     {
         name: "HyperAce",
-         rank: "Plata 🥈",
+         rank: "🥈 Plata",
     level: 25,
 
     rewardExp: 100,
@@ -261,7 +261,7 @@ const bots = [
 
     {
         name: "VortexYT",
-         rank: "Plata 🥈",
+         rank: "🥈 Plata",
     level: 30,
 
     rewardExp: 100,
@@ -273,7 +273,7 @@ const bots = [
 
     {
         name: "QuantumLeo",
-        rank: "Oro 🥇",
+        rank: "🥇 Oro",
     level: 30,
 
     rewardExp: 100,
@@ -285,7 +285,7 @@ const bots = [
 
     {
         name: "ShadowPing",
-        rank: "Oro 🥇",
+        rank: "🥇 Oro",
     level: 35,
 
     rewardExp: 100,
@@ -297,7 +297,7 @@ const bots = [
 
     {
         name: "ByteStorm",
-        rank: "Platino 💿",
+        rank: "💿 Platino",
     level: 40,
 
     rewardExp: 100,
@@ -309,7 +309,7 @@ const bots = [
 
     {
         name: "ElectroRay",
-        rank: "Platino 💿",
+        rank: "💿 Platino",
     level: 45,
 
     rewardExp: 100,
@@ -321,7 +321,7 @@ const bots = [
 
     {
         name: "NeonFox",
-        rank: "Esmeralda 💚",
+        rank: "💚 Esmeralda"",
     level: 50,
 
     rewardExp: 100,
@@ -333,7 +333,7 @@ const bots = [
 
     {
         name: "BlitzMax",
-        rank: "Esmeralda 💚",
+        rank: "💚 Esmeralda"",
     level: 55,
 
     rewardExp: 100,
@@ -345,7 +345,7 @@ const bots = [
 
     {
         name: "OrbitPlay",
-        rank: "Esmeralda 💚",
+        rank: "💚 Esmeralda",
     level: 55,
 
     rewardExp: 100,
@@ -357,7 +357,7 @@ const bots = [
 
     {
         name: "CyberDani",
-        rank: "Zafiro 💙",
+        rank: "💙 Zafiro",
     level: 60,
 
     rewardExp: 100,
@@ -369,7 +369,7 @@ const bots = [
 
     {
         name: "DarkPulse",
-        rank: "Rubí ❤️",
+        rank: "💙 Zafiro",
     level: 65,
 
     rewardExp: 100,
@@ -381,7 +381,7 @@ const bots = [
 
     {
         name: "ZenithPro",
-        rank: "Rubí ❤️",
+        rank: "❤️ Rubí",
     level: 70,
 
     rewardExp: 100,
@@ -393,7 +393,7 @@ const bots = [
 
     {
         name: "LunarKick",
-        rank: "Rubí ❤️",
+        rank: "❤️ Rubí",
     level: 75,
 
     rewardExp: 100,
@@ -405,7 +405,7 @@ const bots = [
 
     {
         name: "GlitchWolf",
-        rank: "Diamante 💎",
+        rank: "💎 Diamante",
     level: 80,
 
     rewardExp: 100,
@@ -417,7 +417,7 @@ const bots = [
 
     {
         name: "TitanByte",
-        rank: "Diamante 💎",
+        rank: "💎 Diamante",
     level: 85,
 
     rewardExp: 100,
@@ -429,7 +429,7 @@ const bots = [
 
     {
         name: "ApexZero",
-        rank: "Diamante 💎",
+        rank: "💎 Diamante",
     level: 100,
 
     rewardExp: 100,
@@ -559,6 +559,18 @@ function getRandomBotForRank() {
             availableBots.length
         )
     ];
+    btnOnline.onclick = () => {
+
+    updateRank();
+
+    const rival =
+        getRandomBotForRank();
+
+    selectedBot = rival;
+
+    startOnlineMatch(rival);
+
+};
 }
 
 // ---------- UI ----------
@@ -677,14 +689,6 @@ function openScreen(screen) {
     screen.classList.remove("hidden");
 
 }
-
-// ---------- BOT LIST ----------
-
-const botList =
-document.getElementById("botList");
-
-
-
 
 
 // ---------- EVENTOS TECLADO ----------
@@ -1106,9 +1110,17 @@ function endMatch() {
 
         playerData.wins++;
 
-        playerData.exp +=
-selectedBot.rewardExp;
+       if(gameMode === "online" && selectedBot){
 
+    playerData.exp += selectedBot.rewardExp;
+    playerData.coins += selectedBot.rewardCoins;
+
+}else{
+
+    playerData.exp += 100;
+    playerData.coins += 50;
+
+}
 playerData.coins +=
 selectedBot.rewardCoins;
 
